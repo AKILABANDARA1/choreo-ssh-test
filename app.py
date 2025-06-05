@@ -5,7 +5,6 @@ import os
 app = Flask(__name__)
 
 def get_ngrok_ssh_info():
-    # Wait for ngrok to start
     time.sleep(5)
     try:
         with open("ngrok.log", "r") as f:
@@ -21,13 +20,17 @@ def get_ngrok_ssh_info():
 @app.route("/")
 def index():
     ssh_info = get_ngrok_ssh_info()
+    if ":" in ssh_info:
+        host, port = ssh_info.split(":")
+    else:
+        host, port = ssh_info, "?"
     return f"""
-    <h1>SSH Tunnel Information</h1>
+    <h1>SSH Tunnel Info</h1>
     <p><strong>Username:</strong> appuser</p>
     <p><strong>Password:</strong> choreo123</p>
-    <p><strong>Connect using:</strong></p>
-    <pre>ssh -p {ssh_info.split(':')[1]} appuser@{ssh_info.split(':')[0]}</pre>
-    <p>Ngrok Tunnel: <code>{ssh_info}</code></p>
+    <p><strong>Ngrok TCP:</strong> {ssh_info}</p>
+    <p><strong>SSH Command:</strong></p>
+    <pre>ssh -p {port} appuser@{host}</pre>
     """
 
 if __name__ == "__main__":
