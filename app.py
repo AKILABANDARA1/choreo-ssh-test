@@ -4,11 +4,10 @@ import traceback
 
 app = Flask(__name__)
 
-# Global error log list (in-memory)
 error_logs = []
 
 def log_error(msg):
-    print(msg)  # also print to container logs
+    print(msg)
     error_logs.append(msg)
 
 def get_ngrok_ssh_info():
@@ -38,7 +37,7 @@ def index():
     error_section = ""
     if error_logs:
         error_section = "<h2>Errors:</h2><pre style='color: red; background:#fee; padding:10px;'>" + \
-                        "\n".join(error_logs[-10:]) + "</pre>"  # last 10 errors
+                        "\n".join(error_logs[-10:]) + "</pre>"
 
     if ssh_info is None:
         return f"""
