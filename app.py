@@ -1,29 +1,30 @@
 from flask import Flask
 import time
-import os
 
 app = Flask(__name__)
 
 def get_ngrok_ssh_info():
-    time.sleep(5)
     try:
         with open("ngrok.log", "r") as f:
             lines = f.readlines()
-        for line in lines:
+        for line in reversed(lines):
             if "url=" in line and "tcp://" in line:
                 tcp_url = line.split("url=")[1].strip()
                 return tcp_url.replace("tcp://", "")
     except Exception as e:
-        return f"Error: {e}"
-    return "Waiting for Ngrok..."
+        return None
 
 @app.route("/")
 def index():
     ssh_info = get_ngrok_ssh_info()
-    if ":" in ssh_info:
+    if ssh_info is None:
+        return "<h1>Waiting for Ngrok tunnel to start...</h1>"
+
+    try:
         host, port = ssh_info.split(":")
-    else:
+    except:
         host, port = ssh_info, "?"
+
     return f"""
     <h1>SSH Tunnel Info</h1>
     <p><strong>Username:</strong> appuser</p>
