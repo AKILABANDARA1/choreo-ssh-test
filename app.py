@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 
 def get_ngrok_ssh_info():
-    log_file = "ngrok.log"
+    log_file = "/tmp/ngrok.log"
     if not os.path.exists(log_file):
         return None
 
