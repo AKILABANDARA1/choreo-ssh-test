@@ -1,17 +1,22 @@
 from flask import Flask
-import time
+import os
 
 app = Flask(__name__)
 
 def get_ngrok_ssh_info():
+    log_file = "ngrok.log"
+    if not os.path.exists(log_file):
+        return None
+
     try:
-        with open("ngrok.log", "r") as f:
+        with open(log_file, "r") as f:
             lines = f.readlines()
         for line in reversed(lines):
             if "url=" in line and "tcp://" in line:
                 tcp_url = line.split("url=")[1].strip()
                 return tcp_url.replace("tcp://", "")
     except Exception as e:
+        print(f"[ERROR] Failed to read ngrok.log: {e}")
         return None
 
 @app.route("/")
@@ -22,7 +27,7 @@ def index():
 
     try:
         host, port = ssh_info.split(":")
-    except:
+    except ValueError:
         host, port = ssh_info, "?"
 
     return f"""
