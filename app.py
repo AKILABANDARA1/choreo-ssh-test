@@ -11,7 +11,7 @@ def log_error(msg):
     error_logs.append(msg)
 
 def get_ngrok_ssh_info():
-    log_file = "/tmp/ngrok.log"
+    log_file = "/home/appuser/ngrok.log"
     if not os.path.exists(log_file):
         log_error(f"Log file {log_file} does not exist yet.")
         return None
